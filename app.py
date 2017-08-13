@@ -8,7 +8,7 @@ app = Flask(__name__)
 def api_root():
     data = {
         'hello': 'world-v3',
-        'number': 2
+        'number': 4
     }
     resp = jsonify(data)
     resp.status_code = 200
