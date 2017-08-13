@@ -1,0 +1,11 @@
+[Unit]
+Description=pug-3-server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /var/www/pug-3-server/app.py
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
