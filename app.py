@@ -1,12 +1,13 @@
-from flask import Flask, jsonify, request
-from __future__ import print_function # use python 3 syntax but make it compatible with python 2
-from __future__ import division       #                           ''
+from __future__ import print_function  # use python 3 syntax but make it compatible with python 2
+from __future__ import division
 
+from flask import Flask, jsonify, request
 import time     # import the time library for the sleep function
-import gopigo3 # import the GoPiGo3 drivers
+import gopigo3  # import the GoPiGo3 drivers
+import requests
+
 
 GPG = gopigo3.GoPiGo3()
-import requests
 
 app = Flask(__name__)
 
