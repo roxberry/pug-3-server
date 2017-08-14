@@ -2,13 +2,13 @@ from __future__ import division
 from __future__ import print_function  # use python 3 syntax but make it compatible with python 2
 
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, Blueprint, jsonify, request
 
 import gopigo3  # import the GoPiGo3 drivers
 
 GPG = gopigo3.GoPiGo3()
 
-dev = Flask.Blueprint('dev', __name__, template_folder='templates')
+dev = Blueprint('dev', __name__, template_folder='templates')
 
 
 @dev.route('/')
