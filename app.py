@@ -1,4 +1,11 @@
 from flask import Flask, jsonify, request
+from __future__ import print_function # use python 3 syntax but make it compatible with python 2
+from __future__ import division       #                           ''
+
+import time     # import the time library for the sleep function
+import gopigo3 # import the GoPiGo3 drivers
+
+GPG = gopigo3.GoPiGo3()
 import requests
 
 app = Flask(__name__)
@@ -20,6 +27,36 @@ def api_root():
 @app.route('/fwd', methods={'GET'})
 def fwd():
     return 'PUG3 moves forward'
+
+
+@app.route('/led', methods={'GET'})
+def led():
+    try:
+        count = 0
+        while (count < 100):
+            count = count + 1
+            for i in range(11):  # count from 0-10
+                GPG.set_led(GPG.LED_EYE_LEFT, i, i, i)  # set the LED brightness (0 to 255)
+                GPG.set_led(GPG.LED_EYE_RIGHT, 10 - i, 10 - i, 10 - i)  # set the LED brightness (255 to 0)
+                GPG.set_led(GPG.LED_BLINKER_LEFT, (i * 25))  # set the LED brightness (0 to 255)
+                GPG.set_led(GPG.LED_BLINKER_RIGHT, ((10 - i) * 25))  # set the LED brightness (255 to 0)
+                time.sleep(
+                    0.02)  # delay for 0.02 seconds (20ms) to reduce the Raspberry Pi CPU load and give time to see the LED pulsing.
+
+            GPG.set_led(GPG.LED_WIFI, 0, 0, 10)
+
+            for i in range(11):  # count from 0-10
+                GPG.set_led(GPG.LED_EYE_LEFT, 10 - i, 10 - i, 10 - i)  # set the LED brightness (255 to 0)
+                GPG.set_led(GPG.LED_EYE_RIGHT, i, i, i)  # set the LED brightness (0 to 255)
+                GPG.set_led(GPG.LED_BLINKER_LEFT, ((10 - i) * 25))  # set the LED brightness (0 to 255)
+                GPG.set_led(GPG.LED_BLINKER_RIGHT, (i * 25))  # set the LED brightness (255 to 0)
+                time.sleep(
+                    0.02)  # delay for 0.02 seconds (20ms) to reduce the Raspberry Pi CPU load and give time to see the LED pulsing.
+
+            GPG.set_led(GPG.LED_WIFI, 0, 0, 0)
+
+    except KeyboardInterrupt:  # except the program gets interrupted by Ctrl+C on the keyboard.
+        GPG.reset_all()
 
 
 @app.route('/tools', methods={'GET'})
