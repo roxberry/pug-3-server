@@ -1,61 +1,47 @@
-from __future__ import print_function  # use python 3 syntax but make it compatible with python 2
 from __future__ import division
+from __future__ import print_function  # use python 3 syntax but make it compatible with python 2
 
-from flask import Flask, jsonify, request
-import time     # import the time library for the sleep function
-import gopigo3  # import the GoPiGo3 drivers
 import requests
+from flask import Flask, jsonify, request
 
+import gopigo3  # import the GoPiGo3 drivers
 
 GPG = gopigo3.GoPiGo3()
+
+dev = Flask.Blueprint('dev', __name__, template_folder='templates')
+
+
+@dev.route('/')
+def index():
+    """GET to generate a list of endpoints and their docstrings"""
+    urls = dict([(r.rule, Flask.current_app.view_functions.get(r.endpoint).func_doc)
+                 for r in Flask.current_app.url_map.iter_rules()
+                 if not r.rule.startswith('/static')])
+    return Flask.render_template('index.html', urls=urls)
+
 
 app = Flask(__name__)
 
 
-@app.route('/', methods={'GET'})
-def api_root():
-    data = {
-        'hello': 'world-v7',
-        'number': 7
-    }
-    resp = jsonify(data)
-    resp.status_code = 200
-    resp.headers['Link'] = 'http://actu8.io'
-
-    return resp
-
-
 @app.route('/fwd', methods={'GET'})
 def fwd():
+    GPG.fwd()
     return 'PUG3 moves forward'
+
+
+@app.route('/set_motor_power', methods={'GET'})
+def set_motor_power():
+    return "set_motor_power"
 
 
 @app.route('/led', methods={'GET'})
 def led():
-    count = 0
-    while count < 10:
-        count = count + 1
-        for i in range(11):  # count from 0-10
-            GPG.set_led(GPG.LED_EYE_LEFT, i, i, i)  # set the LED brightness (0 to 255)
-            GPG.set_led(GPG.LED_EYE_RIGHT, 10 - i, 10 - i, 10 - i)  # set the LED brightness (255 to 0)
-            GPG.set_led(GPG.LED_BLINKER_LEFT, (i * 25))  # set the LED brightness (0 to 255)
-            GPG.set_led(GPG.LED_BLINKER_RIGHT, ((10 - i) * 25))  # set the LED brightness (255 to 0)
-            time.sleep(
-                0.02)  # delay for 0.02 seconds (20ms) to reduce CPU load & give time to see the LED pulsing.
+    """Calls the LED function.
 
-        GPG.set_led(GPG.LED_WIFI, 0, 0, 10)
-
-        for i in range(11):  # count from 0-10
-            GPG.set_led(GPG.LED_EYE_LEFT, 10 - i, 10 - i, 10 - i)  # set the LED brightness (255 to 0)
-            GPG.set_led(GPG.LED_EYE_RIGHT, i, i, i)  # set the LED brightness (0 to 255)
-            GPG.set_led(GPG.LED_BLINKER_LEFT, ((10 - i) * 25))  # set the LED brightness (0 to 255)
-            GPG.set_led(GPG.LED_BLINKER_RIGHT, (i * 25))  # set the LED brightness (255 to 0)
-            time.sleep(
-                0.02)  # delay for 0.02 seconds (20ms) to reduce CPU load & give time to see the LED pulsing.
-
-        GPG.set_led(GPG.LED_WIFI, 0, 0, 0)
-
-    GPG.reset_all()
+    GET: LED flashes.
+         Returns HTTP 200 on success; body is payload as-is.
+         Returns HTTP 404 when data does not exist.
+    """
     return "LED blinking"
 
 
