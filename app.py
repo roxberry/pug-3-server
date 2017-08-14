@@ -56,6 +56,7 @@ def led():
         GPG.set_led(GPG.LED_WIFI, 0, 0, 0)
 
     GPG.reset_all()
+    return "LED blinking"
 
 
 @app.route('/tools', methods={'GET'})
