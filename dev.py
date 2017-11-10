@@ -1,6 +1,6 @@
 import flask
 from jinja2.utils import import_string
-
+"""dev.py"""
 dev = flask.Blueprint('dev', __name__, template_folder='templates')
 
 
