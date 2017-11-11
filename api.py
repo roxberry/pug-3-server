@@ -23,7 +23,7 @@ api = Blueprint('api', 'api', url_prefix='/api')
 @api.route('/info', methods={'GET'})
 def info():
     # return read_status()
-    i = {"yo":"yo", "manufacturer": gpg3.get_manufacturer(), "board": gpg3.get_board(), "version": gpg3.get_version_firmware()}
+    i = {"manufacturer": gpg3.get_manufacturer(), "board": gpg3.get_board(), "version": gpg3.get_version_firmware()}
     return jsonify(i)
 
 
